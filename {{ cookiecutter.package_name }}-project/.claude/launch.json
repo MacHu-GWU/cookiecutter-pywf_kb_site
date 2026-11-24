@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "docs-html",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "exec .venv/bin/python .claude/skills/sphinx-myst-kb-site/scripts/serve_docs.py --port \"${PORT:-{{ cookiecutter.kb_docs_port }}}\" --directory docs/build/html"],
+      "port": {{ cookiecutter.kb_docs_port }}
+    }
+  ]
+}

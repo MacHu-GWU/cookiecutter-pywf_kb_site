@@ -1,0 +1,94 @@
+.. This file is the source of README.rst. Do not edit README.rst by hand:
+   apply-template (mise run sync) renders it from this file.
+
+.. image:: https://img.shields.io/badge/Release_History!--None.svg?style=social
+    :target: https://github.com/{{ owner }}/{{ tpl_repo }}/blob/main/release-history.rst
+
+.. image:: https://img.shields.io/badge/STAR_Me_on_GitHub!--None.svg?style=social
+    :target: https://github.com/{{ owner }}/{{ tpl_repo }}
+
+
+``{{ tpl_repo }}``
+==============================================================================
+
+
+Overview
+------------------------------------------------------------------------------
+This template generates a knowledge base site as a Python project: write documents in Markdown, reStructuredText or Jupyter notebooks, and every push to ``main`` publishes them to `Cloudflare Pages <https://pages.cloudflare.com/>`_ at ``https://<package-name-slug>.<kb_domain>``.
+
+**Key Features:**
+
+- **Knowledge base site**: `Sphinx <https://www.sphinx-doc.org/>`_ with furo, MyST Markdown and MyST-NB notebooks, sphinx-design and mermaid; one folder per document
+- **Stable links**: every document has a random ``doc_id`` and is linked only by it; ``/p/<doc_id>`` follows the document wherever its folder moves
+- **Readable by AI agents**: each document's plain text at ``p/<doc_id>.md``, an ``llms.txt`` index, and an "AI Reader" link on every page
+- **Search and hosting**: `Pagefind <https://pagefind.app/>`_ search, deployed to Cloudflare Pages by GitHub Actions (a custom domain or ``pages.dev``)
+- **Modern tooling**: `mise-en-place <https://mise.jdx.dev/>`_ tasks and `uv <https://docs.astral.sh/uv/>`_, with GitHub Actions tests and Codecov for the Python side
+- **AI ready**: ships Claude Code skills to plan, write and migrate documents, to maintain the site, and to answer questions from it
+
+
+Disclaimer
+------------------------------------------------------------------------------
+The practices in this template come from the knowledge bases I write and maintain for myself, built on the toolchain behind `over 150 open source Python libraries <https://pypi.org/user/machugwu/>`_. They work well for me; please use them at your own discretion.
+
+
+Usage
+------------------------------------------------------------------------------
+Enter the following command to use the latest template version:
+
+.. code-block:: bash
+
+    pip install "{{ cookiecutter_requirement }}" && cookiecutter https://github.com/{{ owner }}/{{ tpl_repo }}
+
+To use a specific released version (see the `full list of releases <https://github.com/{{ owner }}/{{ tpl_repo }}/releases>`_):
+
+.. code-block:: bash
+
+    cookiecutter https://github.com/{{ owner }}/{{ tpl_repo }} --checkout tags/${version}
+
+For example, to use ``{{ version }}``, the latest version:
+
+.. code-block:: bash
+
+    cookiecutter https://github.com/{{ owner }}/{{ tpl_repo }} --checkout tags/{{ version }}
+
+You'll then be prompted to provide the following information (defaults in parentheses):
+
+.. code-block:: bash
+
+{{ prompts }}
+
+This will generate a repository structure similar to `{{ seed_repo }} <https://github.com/{{ owner }}/{{ seed_repo }}>`_.
+
+Once generated, navigate to your project directory and explore the available automation tasks:
+
+.. code-block:: bash
+
+    cd your_package_name-project
+    mise tasks ls  # List all available tasks
+
+
+Project Maintainer Note
+------------------------------------------------------------------------------
+**Project Architecture:**
+
+- **Seed Repository**: `{{ seed_repo }} <https://github.com/{{ owner }}/{{ seed_repo }}>`_ - A concrete, runnable project used as the source for template generation
+- **Cookiecutter Template**: `{{ tpl_repo }} <https://github.com/{{ owner }}/{{ tpl_repo }}>`_ - This repository
+
+**Maintenance Workflow:**
+
+This template is maintained using a "reverse engineering" approach, driven by Claude Code skills (``.claude/skills/cctpl-*-cn``):
+
+1. Make changes in the Seed project (``{{ seed_repo }}``)
+2. In the Seed, bump the version and record the changes in its own ``release-history-seed-repo.rst``. The Seed and this template share one version number, and the Seed's ``pyproject.toml`` is its only source
+3. Run ``mise run e2e``: it converts the Seed into a template, checks it, applies it to this repo (version included), then generates a project and runs its tests and docs build
+4. Commit and push the Seed, then tag it with ``mise run publish`` and ``mise run release`` in the Seed
+5. Run ``/cctpl-release-cn`` to write this repo's changelog section, which links to the Seed's section of the same version, then ``mise run publish-template`` to publish the template to GitHub. A published version is never overwritten
+6. Run ``/cctpl-verify-cn`` to verify the published template
+
+**Toolchain:**
+
+- **mise-en-place**: Task runner and tool version manager
+- **uv**: Fast Python package installer and resolver
+- **cookiecutter-maker**: Reverse-engineering tool that converts concrete projects into templates
+
+For the full maintenance specification, see `cctpl-base-cn <./.claude/skills/cctpl-base-cn/SKILL.md>`_.
